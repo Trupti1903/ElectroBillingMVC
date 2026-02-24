@@ -1,0 +1,89 @@
+﻿@model ElectroBillingMVC.Models.Manager
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Manager Registration</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to right, #162a45);
+        }
+
+        .card {
+            background: #e9e9e9;
+            padding: 40px;
+            width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .card h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            background-color: #2c2f7f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-register:hover {
+            background-color: #1f2266;
+        }
+
+        .message {
+            color: green;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Manager<br />Registration</h2>
+
+        <form asp-action="Register" method="post">
+            <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+            <input asp-for="Email" class="form-control" placeholder="Email Address" />
+            <input asp-for="PhoneNumber" class="form-control" placeholder="Phone Number" />
+            <input asp-for="Password" class="form-control" placeholder="Password" type="password" />
+
+            <button type="submit" class="btn-register">Register</button>
+        </form>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="message">@ViewBag.Message</div>
+        }
+    </div>
+
+</body>
+</html>

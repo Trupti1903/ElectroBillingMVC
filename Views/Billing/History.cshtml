@@ -1,0 +1,97 @@
+﻿@model IEnumerable<ElectroBillingMVC.Models.Bill>
+
+@{
+    ViewData["Title"] = "Customer History";
+}
+
+<style>
+    body {
+        background: linear-gradient(to right,#162a45);
+        color: white;
+    }
+
+    .page-title {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .search-box {
+        width: 50%;
+        margin: 20px auto;
+    }
+
+        .search-box input {
+            background-color: #1e2a38;
+            border: 1px solid #3a4a5c;
+            color: white;
+        }
+
+    .customer-card {
+        background: #1e2a38;
+        border-radius: 15px;
+        padding: 25px;
+        width: 250px;
+        box-shadow: 0px 5px 15px rgba(0,0,0,0.4);
+        text-align: center;
+        margin: 30px;
+        transition: 0.3s;
+    }
+
+        .customer-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(45deg, #4e73df, #1cc88a);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        font-weight: bold;
+        margin: 0 auto 15px;
+    }
+
+    .btn-view {
+        background-color: #4e73df;
+        color: white;
+        border: none;
+        margin-right: 5px;
+    }
+
+    .btn-delete {
+        background-color: #e74a3b;
+        color: white;
+        border: none;
+    }
+
+</style>
+
+<div class="container">
+
+    <div class="page-title">
+        <h1>Customer Payment History</h1>
+        <p>Click a customer to view their payment details</p>
+    </div>
+
+    <div class="search-box">
+        <input type="text" class="form-control" placeholder="🔍 Search customer...">
+    </div>
+
+    <div class="d-flex flex-wrap">
+
+        <!-- Sample Customer Card -->
+        <div class="customer-card">
+            <div class="avatar">Y</div>
+            <h5>Yashvi</h5>
+            <div class="mt-3">
+                <button class="btn btn-view">View</button>
+                <button class="btn btn-delete">Delete</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
