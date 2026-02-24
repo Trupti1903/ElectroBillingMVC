@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Payment History";
+}
+
+<style>
+    body {
+        background-color: #f4f6f9;
+    }
+
+    .page-container {
+        padding: 30px;
+    }
+
+    .back-btn {
+        background-color: #4e73df;
+        color: white;
+        border: none;
+        padding: 6px 15px;
+        margin-bottom: 15px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .info-card {
+        background-color: #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    footer {
+        background: #1e2a38;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        margin-top: 40px;
+    }
+
+    .back-btn {
+        background-color: #4e73df;
+        color: white;
+        border: none;
+        padding: 6px 15px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="container page-container">
+
+    <!-- Back Button -->
+    <a asp-controller="Billing"
+       asp-action="History"
+       class="back-btn">
+        ← Back to Customers
+    </a>
+    <!-- Page Title -->
+    <h2>Himani – Payment History</h2>
+
+    <!-- Customer Info -->
+    <div class="info-card">
+        <p><b>Customer Name:</b> Himani</p>
+        <p><b>Mobile Number:</b> 123456790</p>
+        <p><b>Total Received:</b> ₹0</p>
+        <p><b>Current Pending:</b> ₹0</p>
+    </div>
+
+    <!-- Payment Table -->
+    <div class="table-container">
+        <table class="table table-bordered">
+            <thead class="table-secondary">
+                <tr>
+                    <th>#</th>
+                    <th>Paid Amount</th>
+                    <th>Pending After Bill</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>₹</td>
+                    <td>₹</td>
+                    <td>16/02/2026</td>
+                    <td>10:25 PM</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>₹</td>
+                    <td>₹</td>
+                    <td>13/02/2026</td>
+                    <td>05:14 PM</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>₹</td>
+                    <td>₹</td>
+                    <td>11/02/2026</td>
+                    <td>11:50 PM</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

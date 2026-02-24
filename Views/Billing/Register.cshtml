@@ -78,6 +78,10 @@
 
             <button type="submit" class="btn-register">Register</button>
         </form>
+        <div class="login-text">
+            Already have an account?
+            <a asp-controller="Billing" asp-action="Login">Login</a>
+        </div>
 
         @if (ViewBag.Message != null)
         {

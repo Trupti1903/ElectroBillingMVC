@@ -78,6 +78,15 @@ namespace ElectroBillingMVC.Controllers
             return RedirectToAction("Login", "Billing");
             
         }
+        public IActionResult Start()
+        {
+            return View();
+        }
+        public IActionResult PaymentHistory(string customerName)
+        {
+            return View();
+        }
+
 
     }
 }
