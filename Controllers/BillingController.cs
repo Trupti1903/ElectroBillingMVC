@@ -154,6 +154,36 @@ namespace ElectroBillingMVC.Controllers
 
             return View(pendingBills);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdatePayment(int id, decimal amount)
+        {
+            var bill = _context.Bills.Find(id);
+
+            if (bill != null && amount > 0)
+            {
+                if (amount > bill.RemainingAmount)
+                    amount = bill.RemainingAmount;
+
+                bill.PaidAmount += amount;
+                bill.RemainingAmount -= amount;
+
+                if (bill.RemainingAmount <= 0)
+                {
+                    bill.RemainingAmount = 0;
+                    bill.Status = "Paid";
+                }
+                else
+                {
+                    bill.Status = "Pending";
+                }
+
+                _context.Bills.Update(bill);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Pending");
+        }
 
         public IActionResult Paid()
         {

@@ -113,6 +113,25 @@
                                 </form>
                             </td>
                         </tr>
+                    <td>
+                        <form asp-action="UpdatePayment" asp-controller="Billing" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" name="id" value="@bill.BillId" />
+
+                            <input type="number"
+                                   name="amount"
+                                   min="1"
+                                   max="@bill.RemainingAmount"
+                                   placeholder="Enter amount"
+                                   required
+                                   style="width:100px; padding:4px;" />
+
+                            <button type="submit" class="receive-btn">
+                                Update
+                            </button>
+                        </form>
+                    </td>
                     }
                 }
                 else
