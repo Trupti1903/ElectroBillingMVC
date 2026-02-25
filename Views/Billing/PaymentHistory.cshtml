@@ -1,7 +1,8 @@
-﻿@model ElectroBillingMVC.Models.Bill
+﻿@model IEnumerable<ElectroBillingMVC.Models.Bill>
 
 @{
     ViewData["Title"] = "Payment History";
+    var firstBill = Model.FirstOrDefault();
 }
 
 <style>
@@ -36,62 +37,64 @@
         padding: 10px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
-    footer {
-        background: #1e2a38;
-        color: white;
-        text-align: center;
-        padding: 15px;
-        margin-top: 40px;
-    }
 </style>
 
 <div class="container page-container">
 
-    <!-- Back Button -->
     <a asp-controller="Billing"
        asp-action="History"
        class="back-btn">
         ← Back to Customers
     </a>
 
-    <!-- Page Title -->
-    <h2>@Model.CustomerName – Payment History</h2>
+    @if (firstBill != null)
+    {
+        <h2>@firstBill.CustomerName – Payment History</h2>
 
-    <!-- Customer Info -->
-    <div class="info-card">
-        <p><b>Customer Name:</b> @Model.CustomerName</p>
-        <p><b>Mobile Number:</b> @Model.Phone</p>
-        <p><b>Total Bill Amount:</b> ₹@Model.TotalAmount</p>
-        <p><b>Total Paid:</b> ₹@Model.PaidAmount</p>
-        <p><b>Current Pending:</b> ₹@Model.RemainingAmount</p>
-        <p><b>Status:</b> @Model.Status</p>
-    </div>
+        <!-- Customer Info -->
+        <div class="info-card">
+            <p><b>Customer Name:</b> @firstBill.CustomerName</p>
+            <p><b>Mobile Number:</b> @firstBill.Phone</p>
+            <p><b>Address:</b> @firstBill.Address</p>
+        </div>
 
-    <!-- Payment Table -->
-    <div class="table-container">
-        <table class="table table-bordered">
-            <thead class="table-secondary">
-                <tr>
-                    <th>#</th>
-                    <th>Paid Amount</th>
-                    <th>Pending After Bill</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>₹@Model.PaidAmount</td>
-                    <td>₹@Model.RemainingAmount</td>
-                    <td>@Model.BillDate.ToString("dd/MM/yyyy")</td>
-                    <td>@Model.BillDate.ToString("hh:mm tt")</td>
-                    <td>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <!-- Payment Table -->
+        <div class="table-container">
+            <table class="table table-bordered">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>#</th>
+                        <th>Total Amount</th>
+                        <th>Paid Amount</th>
+                        <th>Remaining</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int count = 1;
+                    }
+                    @foreach (var bill in Model)
+                    {
+                        <tr>
+                            <td>@count</td>
+                            <td>₹@bill.TotalAmount</td>
+                            <td>₹@bill.PaidAmount</td>
+                            <td>₹@bill.RemainingAmount</td>
+                            <td>@bill.Status</td>
+                            <td>@bill.BillDate.ToString("dd/MM/yyyy hh:mm tt")</td>
+                        </tr>
+
+                        count++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p>No records found.</p>
+    }
 
 </div>

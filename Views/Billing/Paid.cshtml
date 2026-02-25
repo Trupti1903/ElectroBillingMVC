@@ -92,6 +92,7 @@
                         <td>@bill.BillDate.ToString("hh:mm tt")</td>
                         <td>
                             <form asp-action="DeleteBill" asp-controller="Billing" method="post">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@bill.BillId" />
                                 <button type="submit" class="delete-btn">
                                     Delete
