@@ -7,27 +7,32 @@
 <style>
     body {
         background: linear-gradient(to right, #1e2f44, #243b55);
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
     }
 
     .pending-container {
+        min-height: 90vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 85vh;
+        padding: 20px;
     }
 
     .pending-card {
-        background: #f2f2f2;
-        padding: 40px;
-        border-radius: 15px;
-        width: 650px;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 900px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     }
 
         .pending-card h2 {
             text-align: center;
             margin-bottom: 25px;
-            color: #222;
+            color: #2c3e50;
         }
 
     table {
@@ -40,17 +45,23 @@
         color: white;
         padding: 12px;
         text-align: center;
+        font-size: 15px;
     }
 
     td {
         padding: 12px;
         text-align: center;
-        border: 1px solid #ccc;
+        border: 1px solid #ddd;
         color: #333;
+        font-size: 14px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
     }
 
     .receive-btn {
-        background-color: #4a8af4;
+        background-color: #28a745;
         color: white;
         padding: 6px 14px;
         border: none;
@@ -59,8 +70,15 @@
     }
 
         .receive-btn:hover {
-            background-color: #3b73cc;
+            background-color: #218838;
         }
+
+    .no-data {
+        text-align: center;
+        padding: 20px;
+        font-size: 16px;
+        color: #888;
+    }
 </style>
 
 <div class="pending-container">
@@ -70,21 +88,39 @@
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Customer Name</th>
                     <th>Mobile</th>
-                    <th>Pending</th>
+                    <th>Pending Amount</th>
+                    <th>Bill Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Himani</td>
-                    <td>123456790</td>
-                    <td>₹60</td>
-                    <td>
-                        <button class="receive-btn">Receive</button>
-                    </td>
-                </tr>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var bill in Model)
+                    {
+                        <tr>
+                            <td>@bill.CustomerName</td>
+                            <td>@bill.Phone</td>
+                            <td>₹@bill.RemainingAmount</td>
+                            <td>@bill.BillDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <form asp-action="ReceivePayment" asp-controller="Billing" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@bill.BillId" />
+                                    <button type="submit" class="receive-btn">Receive</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="no-data">No Pending Payments Found</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

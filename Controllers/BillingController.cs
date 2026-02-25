@@ -29,7 +29,6 @@ namespace ElectroBillingMVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Bill bill)
         {
-            // Remove validation for fields not coming from form
             ModelState.Remove("Status");
             ModelState.Remove("RemainingAmount");
             ModelState.Remove("BillDate");
@@ -41,17 +40,28 @@ namespace ElectroBillingMVC.Controllers
 
             string connStr = _configuration.GetConnectionString("DefaultConnection");
 
-            // Set calculated fields
+            // Calculate Remaining
             bill.RemainingAmount = bill.TotalAmount - bill.PaidAmount;
-            bill.Status = bill.RemainingAmount <= 0 ? "Paid" : "Pending";
+
+            if (bill.RemainingAmount <= 0)
+            {
+                bill.Status = "Paid";
+                bill.RemainingAmount = 0;
+                bill.PaidAmount = bill.TotalAmount;
+            }
+            else
+            {
+                bill.Status = "Pending";
+            }
+
             bill.BillDate = DateTime.Now;
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                string query = @"INSERT INTO Bills 
-        (CustomerName, Phone, Address, TotalAmount, PaidAmount, RemainingAmount, BillDate, Status) 
-        VALUES 
-        (@CustomerName, @Phone, @Address, @TotalAmount, @PaidAmount, @RemainingAmount, @BillDate, @Status)";
+                string query = @"INSERT INTO Bills
+                (CustomerName, Phone, Address, TotalAmount, PaidAmount, RemainingAmount, BillDate, Status)
+                VALUES
+                (@CustomerName, @Phone, @Address, @TotalAmount, @PaidAmount, @RemainingAmount, @BillDate, @Status)";
 
                 SqlCommand cmd = new SqlCommand(query, con);
 
@@ -72,7 +82,7 @@ namespace ElectroBillingMVC.Controllers
         }
 
         // ==========================
-        // HISTORY
+        // HISTORY (NO CHANGE)
         // ==========================
         public IActionResult History()
         {
@@ -83,8 +93,8 @@ namespace ElectroBillingMVC.Controllers
             {
                 string query = "SELECT * FROM Bills";
                 SqlCommand cmd = new SqlCommand(query, con);
-
                 con.Open();
+
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -98,6 +108,7 @@ namespace ElectroBillingMVC.Controllers
                         TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
                         PaidAmount = Convert.ToDecimal(reader["PaidAmount"]),
                         RemainingAmount = Convert.ToDecimal(reader["RemainingAmount"]),
+                        BillDate = Convert.ToDateTime(reader["BillDate"]),
                         Status = reader["Status"].ToString()
                     });
                 }
@@ -106,69 +117,80 @@ namespace ElectroBillingMVC.Controllers
             return View(bills);
         }
 
-
-        // Delete payment from database
+        // ==========================
+        // DELETE (works for Paid + History)
+        // ==========================
         [HttpPost]
         public IActionResult DeleteBill(int id)
         {
             var bill = _context.Bills.Find(id);
-
             if (bill != null)
             {
                 _context.Bills.Remove(bill);
                 _context.SaveChanges();
             }
 
-            return RedirectToAction("History");
+            // Redirect back to Paid page if deleted from Paid
+            return RedirectToAction("Paid");
         }
         // ==========================
-        // PENDING
+        // RECEIVE PAYMENT
+        // Pending -> Paid
+        // ==========================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ReceivePayment(int id)
+        {
+            var bill = _context.Bills.Find(id);
+
+            if (bill != null)
+            {
+                bill.PaidAmount = bill.TotalAmount;
+                bill.RemainingAmount = 0;
+                bill.Status = "Paid";
+
+                _context.Bills.Update(bill);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Pending");
+        }
+
+
+        // ==========================
+        // PENDING PAGE
         // ==========================
         public IActionResult Pending()
         {
-            return GetBillsByStatus("Pending");
+            var pendingBills = _context.Bills
+                .Where(b => b.Status == "Pending")
+                .ToList();
+
+            return View(pendingBills);
         }
 
         // ==========================
-        // PAID
+        // PAID PAGE
         // ==========================
         public IActionResult Paid()
         {
-            return GetBillsByStatus("Paid");
-        }
+            var paidBills = _context.Bills
+                .Where(b => b.Status == "Paid")
+                .ToList();
 
-        private IActionResult GetBillsByStatus(string status)
-        {
-            List<Bill> bills = new List<Bill>();
-            string connStr = _configuration.GetConnectionString("DefaultConnection");
-
-            using (SqlConnection con = new SqlConnection(connStr))
-            {
-                string query = "SELECT * FROM Bills WHERE LOWER(Status) = LOWER(@Status)";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Status", status);
-
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    bills.Add(new Bill
-                    {
-                        BillId = Convert.ToInt32(reader["BillId"]),
-                        CustomerName = reader["CustomerName"].ToString(),
-                        Phone = reader["Phone"].ToString(),
-                        PaidAmount = Convert.ToDecimal(reader["PaidAmount"]),
-                        BillDate = Convert.ToDateTime(reader["BillDate"])
-                    });
-                }
-            }
-
-            return View(bills);
+            return View(paidBills);
         }
 
         // ==========================
-        // PAYMENT HISTORY (VIEW DETAILS)
+        // RECEIVE PAYMENT
+        // Pending -> Paid
+        // ==========================
+        // ==========================
+        // RECEIVE PAYMENT
+        // Pending -> Paid
+        // ==========================
+        // ==========================
+        // PAYMENT HISTORY (DETAIL)
         // ==========================
         public IActionResult PaymentHistory(int id)
         {
@@ -228,7 +250,6 @@ namespace ElectroBillingMVC.Controllers
             }
 
             HttpContext.Session.SetString("AdminEmail", user.Email);
-
             return RedirectToAction("Dashboard");
         }
 
@@ -245,7 +266,6 @@ namespace ElectroBillingMVC.Controllers
         {
             _context.Managers.Add(manager);
             _context.SaveChanges();
-
             return RedirectToAction("Login");
         }
 
@@ -258,7 +278,6 @@ namespace ElectroBillingMVC.Controllers
             {
                 return RedirectToAction("Login");
             }
-
             return View();
         }
 
