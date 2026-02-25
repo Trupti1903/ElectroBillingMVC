@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ElectroBillingMVC.Models.Bill
+
+@{
     ViewData["Title"] = "Payment History";
 }
 
@@ -42,15 +44,6 @@
         padding: 15px;
         margin-top: 40px;
     }
-
-    .back-btn {
-        background-color: #4e73df;
-        color: white;
-        border: none;
-        padding: 6px 15px;
-        text-decoration: none;
-        border-radius: 5px;
-    }
 </style>
 
 <div class="container page-container">
@@ -61,15 +54,18 @@
        class="back-btn">
         ← Back to Customers
     </a>
+
     <!-- Page Title -->
-    <h2>Himani – Payment History</h2>
+    <h2>@Model.CustomerName – Payment History</h2>
 
     <!-- Customer Info -->
     <div class="info-card">
-        <p><b>Customer Name:</b> Himani</p>
-        <p><b>Mobile Number:</b> 123456790</p>
-        <p><b>Total Received:</b> ₹0</p>
-        <p><b>Current Pending:</b> ₹0</p>
+        <p><b>Customer Name:</b> @Model.CustomerName</p>
+        <p><b>Mobile Number:</b> @Model.Phone</p>
+        <p><b>Total Bill Amount:</b> ₹@Model.TotalAmount</p>
+        <p><b>Total Paid:</b> ₹@Model.PaidAmount</p>
+        <p><b>Current Pending:</b> ₹@Model.RemainingAmount</p>
+        <p><b>Status:</b> @Model.Status</p>
     </div>
 
     <!-- Payment Table -->
@@ -87,24 +83,19 @@
             <tbody>
                 <tr>
                     <td>1</td>
-                    <td>₹</td>
-                    <td>₹</td>
-                    <td>16/02/2026</td>
-                    <td>10:25 PM</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>₹</td>
-                    <td>₹</td>
-                    <td>13/02/2026</td>
-                    <td>05:14 PM</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>₹</td>
-                    <td>₹</td>
-                    <td>11/02/2026</td>
-                    <td>11:50 PM</td>
+                    <td>₹@Model.PaidAmount</td>
+                    <td>₹@Model.RemainingAmount</td>
+                    <td>@Model.BillDate.ToString("dd/MM/yyyy")</td>
+                    <td>@Model.BillDate.ToString("hh:mm tt")</td>
+                    <td>
+                        <a asp-controller="Billing"
+                           asp-action="DeletePayment"
+                           asp-route-id="@Model.BillId"
+                           class="btn btn-danger"
+                           onclick="return confirm('Are you sure you want to delete this payment?');">
+                            Delete
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>

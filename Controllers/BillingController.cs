@@ -43,7 +43,7 @@ namespace ElectroBillingMVC.Controllers
 
             // Set calculated fields
             bill.RemainingAmount = bill.TotalAmount - bill.PaidAmount;
-            bill.Status = bill.RemainingAmount == 0 ? "Paid" : "Pending";
+            bill.Status = bill.RemainingAmount <= 0 ? "Paid" : "Pending";
             bill.BillDate = DateTime.Now;
 
             using (SqlConnection con = new SqlConnection(connStr))
@@ -106,6 +106,21 @@ namespace ElectroBillingMVC.Controllers
             return View(bills);
         }
 
+
+        // Delete payment from database
+        [HttpPost]
+        public IActionResult DeleteBill(int id)
+        {
+            var bill = _context.Bills.Find(id);
+
+            if (bill != null)
+            {
+                _context.Bills.Remove(bill);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("History");
+        }
         // ==========================
         // PENDING
         // ==========================
@@ -129,7 +144,7 @@ namespace ElectroBillingMVC.Controllers
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                string query = "SELECT * FROM Bills WHERE Status = @Status";
+                string query = "SELECT * FROM Bills WHERE LOWER(Status) = LOWER(@Status)";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@Status", status);
 
@@ -142,15 +157,54 @@ namespace ElectroBillingMVC.Controllers
                     {
                         BillId = Convert.ToInt32(reader["BillId"]),
                         CustomerName = reader["CustomerName"].ToString(),
-                        TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
+                        Phone = reader["Phone"].ToString(),
                         PaidAmount = Convert.ToDecimal(reader["PaidAmount"]),
-                        RemainingAmount = Convert.ToDecimal(reader["RemainingAmount"]),
-                        Status = reader["Status"].ToString()
+                        BillDate = Convert.ToDateTime(reader["BillDate"])
                     });
                 }
             }
 
             return View(bills);
+        }
+
+        // ==========================
+        // PAYMENT HISTORY (VIEW DETAILS)
+        // ==========================
+        public IActionResult PaymentHistory(int id)
+        {
+            Bill bill = null;
+            string connStr = _configuration.GetConnectionString("DefaultConnection");
+
+            using (SqlConnection con = new SqlConnection(connStr))
+            {
+                string query = "SELECT * FROM Bills WHERE BillId = @BillId";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@BillId", id);
+
+                con.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    bill = new Bill
+                    {
+                        BillId = Convert.ToInt32(reader["BillId"]),
+                        CustomerName = reader["CustomerName"].ToString(),
+                        Phone = reader["Phone"].ToString(),
+                        Address = reader["Address"].ToString(),
+                        TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
+                        PaidAmount = Convert.ToDecimal(reader["PaidAmount"]),
+                        RemainingAmount = Convert.ToDecimal(reader["RemainingAmount"]),
+                        Status = reader["Status"].ToString(),
+                        BillDate = Convert.ToDateTime(reader["BillDate"])
+                    };
+                }
+            }
+
+            if (bill == null)
+                return NotFound();
+
+            return View(bill);
         }
 
         // ==========================

@@ -8,7 +8,7 @@ namespace ElectroBillingMVC.Models
             : base(options)
         {
         }
-
+        public DbSet<Bill> Bills { get; set; }
         public DbSet<Manager> Managers { get; set; }
     }
 }

@@ -79,29 +79,24 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Static UI Data -->
-                <tr>
-                    <td>Himani</td>
-                    <td>1234567890</td>
-                    <td>₹3000</td>
-                    <td>2/11/2026</td>
-                    <td>11:50:50 PM</td>
-                    <td>
-                        <button class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>Himani</td>
-                    <td>123456789</td>
-                    <td>₹300</td>
-                    <td>2/13/2026</td>
-                    <td>5:14:31 PM</td>
-                    <td>
-                        <button class="delete-btn">Delete</button>
-                    </td>
-                </tr>
-
+                @foreach (var bill in Model)
+                {
+                    <tr>
+                        <td>@bill.CustomerName</td>
+                        <td>@bill.Phone</td>
+                        <td>₹@bill.PaidAmount</td>
+                        <td>@bill.BillDate.ToString("dd/MM/yyyy")</td>
+                        <td>@bill.BillDate.ToString("hh:mm tt")</td>
+                        <td>
+                            <a asp-controller="Billing"
+                               asp-action="Delete"
+                               asp-route-id="@bill.BillId"
+                               class="delete-btn">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
