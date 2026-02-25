@@ -21,9 +21,9 @@
         border: none;
     }
 
-    .btn-primary:hover {
-        background-color: #1e225f;
-    }
+        .btn-primary:hover {
+            background-color: #1e225f;
+        }
 
     .table thead {
         background-color: #2c3e50;
@@ -35,60 +35,68 @@
     <div class="billing-card mx-auto col-md-8">
         <h2 class="text-center mb-4">Billing</h2>
 
-        <!-- Customer Details -->
-        <h5>Customer Details</h5>
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <input type="text" id="customerName" class="form-control" placeholder="Customer Name">
-            </div>
-            <div class="col-md-4">
-                <input type="text" id="mobile" class="form-control" placeholder="Mobile Number">
-            </div>
-            <div class="col-md-4">
-                <input type="text" id="address" class="form-control" placeholder="Address">
-            </div>
-        </div>
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
 
-        <!-- Add Product -->
-        <h5>Add Product</h5>
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <input type="text" id="productName" class="form-control" placeholder="Product Name">
+            <!-- Customer Details -->
+            <h5>Customer Details</h5>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input asp-for="CustomerName" class="form-control" placeholder="Customer Name" required />
+                </div>
+                <div class="col-md-4">
+                    <input asp-for="Phone" class="form-control" placeholder="Mobile Number" required />
+                </div>
+                <div class="col-md-4">
+                    <input asp-for="Address" class="form-control" placeholder="Address" required />
+                </div>
             </div>
-            <div class="col-md-3">
-                <input type="number" id="price" class="form-control" placeholder="Price">
-            </div>
-            <div class="col-md-3">
-                <input type="number" id="qty" class="form-control" value="1">
-            </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-primary w-100" onclick="addProduct()">Add</button>
-            </div>
-        </div>
 
-        <!-- Table -->
-        <table class="table table-bordered text-center">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="productTable">
-            </tbody>
-        </table>
-
-        <!-- Paid Amount -->
-        <div class="row mb-3">
-            <div class="col-md-6 offset-md-6">
-                <label>Paid Amount</label>
-                <input type="number" id="paidAmount" class="form-control" value="0">
+            <!-- Add Product -->
+            <h5>Add Product</h5>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" id="productName" class="form-control" placeholder="Product Name">
+                </div>
+                <div class="col-md-3">
+                    <input type="number" id="price" class="form-control" placeholder="Price">
+                </div>
+                <div class="col-md-3">
+                    <input type="number" id="qty" class="form-control" value="1">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary w-100" onclick="addProduct()">Add</button>
+                </div>
             </div>
-        </div>
 
-        <button class="btn btn-primary w-100" onclick="saveBill()">Save Bill</button>
+            <!-- Product Table -->
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="productTable"></tbody>
+            </table>
+
+            <!-- Hidden TotalAmount (Important) -->
+            <input asp-for="TotalAmount" type="hidden" id="totalAmountHidden" value="0" />
+
+            <!-- Paid Amount -->
+            <div class="row mb-3">
+                <div class="col-md-6 offset-md-6">
+                    <label>Paid Amount</label>
+                    <input asp-for="PaidAmount" id="paidAmountInput" class="form-control" value="0" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Save Bill</button>
+
+        </form>
     </div>
 </div>
 
@@ -108,6 +116,9 @@
         let total = price * qty;
         grandTotal += total;
 
+        // Set hidden value for server
+        document.getElementById("totalAmountHidden").value = grandTotal;
+
         let row = `<tr>
                         <td>${name}</td>
                         <td>${qty}</td>
@@ -121,14 +132,4 @@
         document.getElementById("price").value = "";
         document.getElementById("qty").value = 1;
     }
-
-    function saveBill() {
-        let paid = parseFloat(document.getElementById("paidAmount").value);
-        let remaining = grandTotal - paid;
-
-        alert("Bill Saved!\nTotal: " + grandTotal +
-              "\nPaid: " + paid +
-              "\nRemaining: " + remaining);
-    }
 </script>
-

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ElectroBillingMVC.Models
 {
@@ -7,15 +7,24 @@ namespace ElectroBillingMVC.Models
     {
         public int BillId { get; set; }
 
-        public int CustomerId { get; set; }
-        public Customer? Customer { get; set; }
+        [Required]
+        public string CustomerName { get; set; }
+
+        [Required]
+        public string Phone { get; set; }
+
+        [Required]
+        public string Address { get; set; }
+
+        [Required]
+        public decimal TotalAmount { get; set; }
+
+        public decimal PaidAmount { get; set; }
+
+        public decimal RemainingAmount { get; set; }
 
         public DateTime BillDate { get; set; }
 
-        public decimal TotalAmount { get; set; }
-        public decimal PaidAmount { get; set; }
-        public decimal RemainingAmount { get; set; }
-
-        public string Status { get; set; } // "Paid" or "Pending"
-     }
+        public string Status { get; set; }
+    }
 }
