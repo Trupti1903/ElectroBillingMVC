@@ -85,11 +85,13 @@
 
         </form>
 
-        <div class="register-text">
+        @* <div class="register-text">
             Don't have an account?
             <a asp-controller="Billing" asp-action="Register">Register</a>
-        </div>
-
+        </div> *@
+        <a asp-controller="Billing" asp-action="ForgotPassword">
+            Forgot Password?
+        </a>
     </div>
 
 </body>

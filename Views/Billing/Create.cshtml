@@ -132,3 +132,25 @@
         document.getElementById("qty").value = 1;
     }
 </script>
+<script>
+    document.querySelector("form").addEventListener("submit", function (e) {
+
+        let customerName = document.querySelector("[name='CustomerName']").value.trim();
+        let phone = document.querySelector("[name='Phone']").value.trim();
+        let address = document.querySelector("[name='Address']").value.trim();
+        let productRows = document.querySelectorAll("#productTable tr");
+
+        if (customerName === "" || phone === "" || address === "") {
+            alert("Please fill all customer details.");
+            e.preventDefault();
+            return;
+        }
+
+        if (productRows.length === 0) {
+            alert("Please add at least one product.");
+            e.preventDefault();
+            return;
+        }
+
+    });
+</script>

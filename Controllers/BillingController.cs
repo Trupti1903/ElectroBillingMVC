@@ -3,20 +3,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Net;
+using System.Net.Mail;
+using Microsoft.Extensions.Options;
 
 namespace ElectroBillingMVC.Controllers
 {
+
     public class BillingController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
-
-        public BillingController(ApplicationDbContext context, IConfiguration configuration)
+        public IActionResult Start()
+        {
+            return View();
+        }
+        public BillingController(
+            ApplicationDbContext context,
+            IConfiguration configuration,
+            IOptions<EmailSettings> emailSettings)
         {
             _context = context;
             _configuration = configuration;
+            _emailSettings = emailSettings.Value;
         }
-
         public IActionResult Create()
         {
             return View();
@@ -236,30 +246,31 @@ namespace ElectroBillingMVC.Controllers
         public IActionResult Login(string email, string password)
         {
             var user = _context.Managers
-                .FirstOrDefault(u => u.Email == email && u.Password == password);
-
-            if (user == null)
+                .FirstOrDefault(u =>
+                    u.Email.ToLower() == email.ToLower() &&
+                    u.Password == password);
+            if (user != null)
             {
-                ViewBag.Error = "Invalid Email or Password";
-                return View();
+                HttpContext.Session.SetString("UserEmail", user.Email);
+                return RedirectToAction("Index","Home");
             }
 
-            HttpContext.Session.SetString("AdminEmail", user.Email);
-            return RedirectToAction("Dashboard");
-        }
-
-        public IActionResult Register()
-        {
+            ViewBag.Message = "Invalid Email or Password";
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Register(Manager manager)
-        {
-            _context.Managers.Add(manager);
-            _context.SaveChanges();
-            return RedirectToAction("Login");
-        }
+        //public IActionResult Register()
+        //{
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public IActionResult Register(Manager manager)
+        //{
+        //    _context.Managers.Add(manager);
+        //    _context.SaveChanges();
+        //    return RedirectToAction("Login");
+        //}
 
         public IActionResult Dashboard()
         {
@@ -272,6 +283,116 @@ namespace ElectroBillingMVC.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(string email)
+        {
+            var admin = _context.Managers.FirstOrDefault(x => x.Email == email);
+
+            if (admin == null)
+            {
+                ViewBag.Message = "Email not found";
+                return View();
+            }
+
+            // Generate unique token
+            string token = Guid.NewGuid().ToString();
+
+            admin.ResetToken = token;
+            _context.SaveChanges();
+
+            // Create reset link
+            string resetLink = Url.Action(
+                "ResetPassword",
+                "Billing",
+                new { token = token },
+                Request.Scheme
+            );
+
+            // Send email
+            SendEmail(email, resetLink);
+
+            ViewBag.Message = "Reset link sent to your email";
+            return View();
+        }
+        private readonly EmailSettings _emailSettings;
+        private void SendEmail(string toEmail, string link)
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+                mail.From = new MailAddress(_emailSettings.Email);
+                mail.To.Add(toEmail);
+                mail.Subject = "Reset Password - ElectroBilling";
+                mail.Body = "Click the link to reset password:\n" + link;
+                mail.IsBodyHtml = false;
+
+                SmtpClient smtp = new SmtpClient(_emailSettings.Host, _emailSettings.Port);
+                smtp.Credentials = new NetworkCredential(
+                    _emailSettings.Email,
+                    _emailSettings.Password
+                );
+                smtp.EnableSsl = true;
+
+                smtp.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Email Error: " + ex.Message);
+            }
+        }
+        public IActionResult ResetPassword(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return Content("Invalid reset link");
+            }
+
+            var user = _context.Managers
+                .FirstOrDefault(u => u.ResetToken == token);
+
+            if (user == null)
+            {
+                return Content("Reset link expired or invalid");
+            }
+
+            ViewBag.Token = token;
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ResetPassword(string token, string newPassword)
+        {
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(newPassword))
+            {
+                ViewBag.Token = token;
+                ViewBag.Message = "All fields are required";
+                return View();
+            }
+
+            var user = _context.Managers
+                .FirstOrDefault(u => u.ResetToken == token);
+
+            if (user == null)
+            {
+                return Content("Invalid or expired token");
+            }
+
+            // Update password
+            user.Password = newPassword;
+
+            // Remove token after use
+            user.ResetToken = null;
+
+            _context.SaveChanges();
+
+            TempData["Success"] = "Password changed successfully";
             return RedirectToAction("Login");
         }
     }
