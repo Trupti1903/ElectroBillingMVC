@@ -88,7 +88,7 @@ ElectroBilling/
 
 1. Clone the repository
 ```
-git clone https://github.com/your-username/electrobilling.git
+git clone https://github.com/HimaniSolanki1812/ElectroBillingMVC.git.git
 ```
 
 2. Open the project in Visual Studio
