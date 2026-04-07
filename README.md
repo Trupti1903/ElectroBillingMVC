@@ -1,51 +1,52 @@
-# ⚡ ElectroBilling – Electronic Shop Billing System
+# ⚡ ElectroBilling – Electronic Shop Billing System (ASP.NET MVC)
 
 ## 📌 Project Overview
-ElectroBilling is a React-based Electronic Shop Billing System designed to simplify billing, customer management, and payment tracking for electronic stores.
+ElectroBilling is an ASP.NET MVC-based web application developed to manage billing operations for an electronic shop.  
 
-It helps shop owners efficiently manage products, generate bills, and track payment status (paid/pending) with a clean and user-friendly interface.
+The system helps in handling customers, products, billing, and payment tracking (paid/pending) efficiently with a structured and secure approach.
 
 ---
 
 ## 🚀 Features
 
 ### 🔐 Authentication
-- Secure Manager Login System
-- Access control for authorized users only
+- Secure login system for Manager/Admin
+- Session-based access control
+- Unauthorized access restriction
 
 ### 📊 Dashboard
-- Overview of shop activities
-- Quick insights into billing and customer data
+- Overview of total customers, products, and bills
+- Quick navigation to all modules
 
 ### 👤 Customer Management
 - Add new customers
-- Store customer details
-- View customer history
+- View customer details
+- Maintain customer history
 
 ### 📦 Product Management
-- Add and manage electronic products
-- Store product details (name, price, etc.)
+- Add new products
+- Update product details
+- Manage product pricing
 
 ### 🧾 Billing System
-- Generate bills dynamically
+- Generate bills for customers
 - Add multiple products to a bill
 - Automatic total calculation
 
 ### 💰 Payment Tracking
-- Separate modules for:
+- Separate sections for:
   - ✅ Paid Payments
   - ⏳ Pending Payments
-- Track and update payment status
+- Update payment status
 
 ---
 
 ## 🛠️ Technologies Used
 
-- Frontend: React.js  
-- Styling: CSS / Bootstrap  
-- State Management: React Hooks  
-- Backend: (Add if used, e.g., Node.js / PHP / ASP.NET MVC)  
-- Database: (Add if used, e.g., MySQL / Local Storage)
+- **Frontend:** HTML, CSS, Bootstrap  
+- **Backend:** ASP.NET MVC (C#)  
+- **Database:** SQL Server  
+- **Framework:** .NET  
 
 ---
 
@@ -54,21 +55,30 @@ It helps shop owners efficiently manage products, generate bills, and track paym
 ```
 ElectroBilling/
 │
-├── public/
-├── src/
-│   ├── components/
-│   │   ├── Login.js
-│   │   ├── Dashboard.js
-│   │   ├── AddCustomer.js
-│   │   ├── AddProduct.js
-│   │   ├── Billing.js
-│   │   ├── PendingPayments.js
-│   │   ├── PaidPayments.js
-│   │
-│   ├── App.js
-│   ├── index.js
+├── Controllers/
+│   ├── AccountController.cs
+│   ├── BillingController.cs
+│   ├── CustomerController.cs
+│   ├── ProductController.cs
 │
-├── package.json
+├── Models/
+│   ├── Customer.cs
+│   ├── Product.cs
+│   ├── Billing.cs
+│
+├── Views/
+│   ├── Account/
+│   ├── Billing/
+│   ├── Customer/
+│   ├── Product/
+│   ├── Shared/
+│
+├── wwwroot/
+│   ├── css/
+│   ├── js/
+│
+├── appsettings.json
+├── Program.cs
 └── README.md
 ```
 
@@ -81,52 +91,65 @@ ElectroBilling/
 git clone https://github.com/your-username/electrobilling.git
 ```
 
-2. Navigate to project folder
+2. Open the project in Visual Studio
+
+3. Configure database connection  
+- Go to `appsettings.json`
+- Update your SQL Server connection string
+
+4. Apply migrations (if using Entity Framework)
 ```
-cd electrobilling
+Update-Database
 ```
 
-3. Install dependencies
-```
-npm install
-```
-
-4. Run the project
-```
-npm start
-```
+5. Run the project  
+- Press **F5** or click **Start**
 
 ---
 
-## 📸 Screenshots
-(Add your project screenshots here)
+## 🗄️ Database
+
+- SQL Server is used for data storage
+- Main tables:
+  - Customers
+  - Products
+  - Bills / Orders
+  - Payments
 
 ---
 
 ## 🎯 Use Case
 
-This system is ideal for:
-- Small electronic shops
-- Retail billing systems
-- Shop owners who want digital billing & tracking
+This system is useful for:
+- Electronic shop owners
+- Small retail businesses
+- Billing and payment tracking systems
 
 ---
 
-## 🔒 Future Enhancements
+## 🔒 Security Features
 
-- User roles (Admin / Staff)
+- Login authentication
+- Session handling
+- Route protection (prevent unauthorized access)
+- Input validation
+
+---
+
+## 🔮 Future Enhancements
+
 - Invoice PDF generation
-- Database integration
-- Email/SMS notifications
-- Advanced analytics dashboard
+- Role-based access (Admin/Staff)
+- Email notifications
+- Advanced reports & analytics
 
 ---
 
 ## 👩‍💻 Author
 
-Himani Solanki  
-Apexa Pandit
-Trupti Malmadi
+**Himani Solanki**  
+**Apexa Pandit**
+**Trupti Malmadi**
 
 ---
 
