@@ -6,14 +6,17 @@ using System.Data;
 using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ElectroBillingMVC.Controllers
 {
 
-    public class BillingController : Controller
+    public class BillingController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+
+        [AllowAnonymous]
         public IActionResult Start()
         {
             return View();
@@ -237,12 +240,14 @@ namespace ElectroBillingMVC.Controllers
 
             return View(bills);
         }
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult Login(string email, string password)
         {
             var user = _context.Managers
@@ -251,7 +256,7 @@ namespace ElectroBillingMVC.Controllers
                     u.Password == password);
             if (user != null)
             {
-                HttpContext.Session.SetString("UserEmail", user.Email);
+                HttpContext.Session.SetString("AdminEmail", user.Email);
                 return RedirectToAction("Index","Home");
             }
 
@@ -274,10 +279,6 @@ namespace ElectroBillingMVC.Controllers
 
         public IActionResult Dashboard()
         {
-            if (HttpContext.Session.GetString("AdminEmail") == null)
-            {
-                return RedirectToAction("Login");
-            }
             return View();
         }
         public IActionResult Logout()

@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllers(); 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -24,12 +25,15 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseSession();
 
+app.UseSession();
 app.UseAuthorization();
+
+
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Billing}/{action=Start}/{id?}");
+app.MapControllers(); 
 
 app.Run();
