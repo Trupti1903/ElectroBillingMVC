@@ -23,11 +23,6 @@ The system helps in handling customers, products, billing, and payment tracking 
 - View customer details
 - Maintain customer history
 
-### 📦 Product Management
-- Add new products
-- Update product details
-- Manage product pricing
-
 ### 🧾 Billing System
 - Generate bills for customers
 - Add multiple products to a bill
@@ -95,14 +90,10 @@ git clone https://github.com/HimaniSolanki1812/ElectroBillingMVC.git.git
 
 3. Configure database connection  
 - Go to `appsettings.json`
-- Update your SQL Server connection string
+  
+---
 
-4. Apply migrations (if using Entity Framework)
-```
-Update-Database
-```
-
-5. Run the project  
+4. Run the project  
 - Press **F5** or click **Start**
 
 ---
@@ -136,14 +127,6 @@ This system is useful for:
 
 ---
 
-## 🔮 Future Enhancements
-
-- Invoice PDF generation
-- Role-based access (Admin/Staff)
-- Email notifications
-- Advanced reports & analytics
-
----
 
 ## 👩‍💻 Author
 
